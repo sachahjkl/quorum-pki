@@ -1,3 +1,5 @@
+<img src=".project/image.png" alt="Quorum PKI logo" width="96" height="96">
+
 # Quorum PKI
 
 **An experimental quorum-based acceptance overlay for X.509 certificates.**

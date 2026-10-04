@@ -1,0 +1,14 @@
+name: "quorum-pki"
+description: "Experimental quorum-based X.509 acceptance overlay with a Go reference implementation, WebAssembly laboratory and bounded TLA+ models."
+topics:
+  - "pki"
+  - "x509"
+  - "quorum"
+  - "golang"
+  - "webassembly"
+  - "formal-verification"
+homepage: "https://sachahjkl.github.io/quorum-pki/"
+source:
+  provider: github
+  namespace: "sachahjkl"
+  path: "sachahjkl/quorum-pki"
