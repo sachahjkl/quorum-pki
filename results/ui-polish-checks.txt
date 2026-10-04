@@ -1,0 +1,15 @@
+/tmp/go/bin/go test ./...
+?   	quorum-pki/cmd/demo	[no test files]
+?   	quorum-pki/cmd/node	[no test files]
+?   	quorum-pki/cmd/request	[no test files]
+?   	quorum-pki/cmd/verifier	[no test files]
+?   	quorum-pki/internal/engine	[no test files]
+ok  	quorum-pki/internal/merkle	(cached)
+ok  	quorum-pki/internal/protocol	(cached)
+ok  	quorum-pki/internal/service	0.035s
+ok  	quorum-pki/internal/simulation	0.346s
+/tmp/go/bin/go vet ./...
+GOOS=js GOARCH=wasm /tmp/go/bin/go build -o web/simulator.wasm ./cmd/wasm
+cp "$( /tmp/go/bin/go env GOROOT )/lib/wasm/wasm_exec.js" web/wasm_exec.js
+node scripts/wasm-smoke.cjs
+PASS WASM: 13 cryptographic scenarios, 138 worker events

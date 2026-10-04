@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/proposal.schema.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "configHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "event": {
+      "enum": [
+        "issue",
+        "rotate",
+        "recover",
+        "revoke",
+        "heartbeat"
+      ]
+    },
+    "subject": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$",
+      "maxLength": 253
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^([A-Za-z0-9_-]{43})?$"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "previous": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{64})?$"
+    },
+    "activate": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "retire": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "expires": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 128,
+      "pattern": "^[\\x20-\\x7e]+$"
+    }
+  },
+  "required": [
+    "version",
+    "epoch",
+    "configHash",
+    "event",
+    "subject",
+    "key",
+    "generation",
+    "previous",
+    "activate",
+    "retire",
+    "expires",
+    "nonce"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event": {
+            "enum": [
+              "revoke",
+              "heartbeat"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "key": {
+            "const": ""
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          }
+        }
+      }
+    }
+  ]
+}

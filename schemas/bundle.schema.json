@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/bundle.schema.json",
+  "type": "object",
+  "properties": {
+    "entry": {
+      "$ref": "entry.schema.json"
+    },
+    "checkpoint": {
+      "$ref": "checkpoint.schema.json"
+    },
+    "inclusion": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "state": {
+      "$ref": "state.schema.json"
+    },
+    "stateIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "stateCount": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "stateProof": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "consistency": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    }
+  },
+  "required": [
+    "entry",
+    "checkpoint",
+    "inclusion",
+    "state",
+    "stateIndex",
+    "stateCount",
+    "stateProof",
+    "consistency"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/checkpoint.schema.json",
+  "type": "object",
+  "properties": {
+    "head": {
+      "$ref": "head.schema.json"
+    },
+    "votes": {
+      "type": "array",
+      "items": {
+        "$ref": "signature.schema.json"
+      },
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "head",
+    "votes"
+  ],
+  "additionalProperties": false
+}

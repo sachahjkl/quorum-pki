@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/approval.schema.json",
+  "type": "object",
+  "properties": {
+    "operator": {
+      "type": "string",
+      "pattern": "^ca-[0-9]+$"
+    },
+    "certificate": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]*$"
+    },
+    "vote": {
+      "$ref": "signature.schema.json"
+    }
+  },
+  "required": [
+    "operator",
+    "certificate",
+    "vote"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,29 @@
+?   	quorum-pki/internal/engine	[no test files]
+goos: linux
+goarch: amd64
+pkg: quorum-pki/internal/merkle
+cpu: AMD EPYC 9V74 80-Core Processor                
+BenchmarkInclusion-8   	       3	      1722 ns/op	       320.0 proof-bytes
+PASS
+ok  	quorum-pki/internal/merkle	0.004s
+goos: linux
+goarch: amd64
+pkg: quorum-pki/internal/protocol
+cpu: AMD EPYC 9V74 80-Core Processor                
+BenchmarkSignature-8   	       3	    113378 ns/op	   10488 B/op	     175 allocs/op
+PASS
+ok  	quorum-pki/internal/protocol	0.005s
+PASS
+ok  	quorum-pki/internal/service	0.002s
+goos: linux
+goarch: amd64
+pkg: quorum-pki/internal/simulation
+cpu: AMD EPYC 9V74 80-Core Processor                
+BenchmarkQuorum/5-8           	       3	   8118131 ns/op
+BenchmarkQuorum/10-8          	       3	  18707516 ns/op
+BenchmarkQuorum/50-8          	       3	 240286998 ns/op
+BenchmarkQuorum/100-8         	       3	 638460202 ns/op
+BenchmarkClient-8             	       3	   1359981 ns/op	      5574 bundle-bytes
+BenchmarkSequentialWrites-8   	       3	  14280537 ns/op	        70.03 writes/s
+PASS
+ok  	quorum-pki/internal/simulation	3.829s

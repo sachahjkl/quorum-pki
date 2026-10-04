@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/state.schema.json",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$",
+      "maxLength": 253
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "entryHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "oldKey": {
+      "type": "string",
+      "pattern": "^([A-Za-z0-9_-]{43})?$"
+    },
+    "activate": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "retire": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "expires": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "revoked": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "subject",
+    "generation",
+    "entryHash",
+    "key",
+    "oldKey",
+    "activate",
+    "retire",
+    "expires",
+    "revoked"
+  ],
+  "additionalProperties": false
+}

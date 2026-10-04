@@ -1,0 +1,1 @@
+PASS schema metaschemas, signed fixtures and extra-member rejection

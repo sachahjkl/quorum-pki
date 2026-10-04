@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/simulation.schema.json",
+  "type": "object",
+  "properties": {
+    "validators": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "quorum": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "finality": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "byzantine": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "minLatencyMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    },
+    "maxLatencyMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000
+    },
+    "failurePercent": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "maliciousValidators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unavailableValidators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "badSignatureValidators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "refuseValidators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "networkPartitions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "realtime": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "validators",
+    "quorum",
+    "finality",
+    "byzantine",
+    "seed",
+    "minLatencyMs",
+    "maxLatencyMs",
+    "failurePercent",
+    "maliciousValidators",
+    "unavailableValidators",
+    "badSignatureValidators",
+    "refuseValidators",
+    "networkPartitions",
+    "realtime"
+  ],
+  "additionalProperties": false
+}

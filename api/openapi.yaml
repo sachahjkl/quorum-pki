@@ -1,0 +1,165 @@
+openapi: 3.1.0
+info:
+  title: Quorum PKI experimental API
+  version: 0.1.0
+  description: Native services exchange strict JSON. Simulator endpoints are explicitly distinct from signed native requests. This is not an ACME or CT wire API.
+servers:
+  - url: http://localhost:8083
+    description: Native coordinator
+  - url: http://localhost:8081
+    description: Registry
+  - url: http://localhost:8082
+    description: Witness
+paths:
+  /v1/subjects:
+    post:
+      summary: Submit issue, rotate, revoke, recover or heartbeat to the native coordinator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../schemas/request.schema.json'}
+      responses:
+        '200':
+          description: Finalized light client bundle
+          content:
+            application/json:
+              schema: {$ref: '../schemas/bundle.schema.json'}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/subjects/{subject}:
+    get:
+      summary: Authenticated current state and light client proofs
+      parameters:
+        - {name: subject, in: path, required: true, schema: {type: string}}
+        - {name: known, in: query, schema: {type: integer, minimum: 0, default: 0}}
+      responses:
+        '200':
+          description: Current state, checkpoint, inclusion and consistency proofs
+          content:
+            application/json:
+              schema: {$ref: '../schemas/bundle.schema.json'}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/entries/{sequence}:
+    get:
+      summary: Registry entry (1-based sequence)
+      parameters:
+        - {name: sequence, in: path, required: true, schema: {type: integer, minimum: 1}}
+      responses:
+        '200':
+          description: Entry
+          content:
+            application/json:
+              schema: {$ref: '../schemas/entry.schema.json'}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/config:
+    get:
+      summary: Coordinator configuration; clients MUST obtain their pinned configuration out of band
+      responses:
+        '200':
+          description: Untrusted configuration advertisement
+          content:
+            application/json:
+              schema: {$ref: '../schemas/config.schema.json'}
+  /v1/checkpoint:
+    get:
+      summary: Registry or witness checkpoint
+      responses:
+        '200':
+          description: Checkpoint (size zero is unsigned genesis, never an accepted binding)
+          content:
+            application/json:
+              schema: {$ref: '../schemas/checkpoint.schema.json'}
+  /v1/proofs/inclusion/{sequence}:
+    get:
+      summary: Registry proof at its current size
+      parameters:
+        - {name: sequence, in: path, required: true, schema: {type: integer, minimum: 1}}
+      responses:
+        '200':
+          description: Bottom-up hash path; root and size MUST come from a verified checkpoint
+          content: {application/json: {schema: {type: array, items: {type: string}}}}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/proofs/consistency:
+    get:
+      summary: Registry append-only proof to its current size
+      parameters:
+        - {name: from, in: query, required: true, schema: {type: integer, minimum: 0}}
+      responses:
+        '200':
+          description: RFC 9162 consistency hash path
+          content: {application/json: {schema: {type: array, items: {type: string}}}}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/approve:
+    post:
+      summary: Validator domain/key approval plus X.509 certificate
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '../schemas/request.schema.json'}}}
+      responses:
+        '200': {description: Approval, content: {application/json: {schema: {$ref: '../schemas/approval.schema.json'}}}}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/notarize:
+    post:
+      summary: Validator checkpoint signature after durable lock
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '../schemas/candidate.schema.json'}}}
+      responses:
+        '200': {description: Checkpoint vote, content: {application/json: {schema: {$ref: '../schemas/signature.schema.json'}}}}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/commit:
+    post:
+      summary: Registry compare-and-append with independent signature and prefix verification
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '../schemas/stored.schema.json'}}}
+      responses:
+        '200': {description: Persisted}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/snapshot:
+    get:
+      summary: Full registry snapshot for validators/coordinator; light clients do not need it
+      responses:
+        '200': {description: Snapshot, content: {application/json: {schema: {$ref: '../schemas/stored.schema.json'}}}}
+  /v1/observe:
+    post:
+      summary: Witness verifies checkpoint, consistency and durable local history
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [checkpoint, consistency]
+              properties:
+                checkpoint: {$ref: '../schemas/checkpoint.schema.json'}
+                consistency: {type: array, items: {type: string}}
+      responses:
+        '200': {description: Consistent checkpoint persisted}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/gossip:
+    post:
+      summary: Compare two verified same-size witness views
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '../schemas/checkpoint.schema.json'}}}
+      responses:
+        '200': {description: No same-size fork observed; not a proof of global consistency}
+        '409': {$ref: '#/components/responses/Error'}
+  /v1/events:
+    get:
+      summary: Coordinator or demo SSE stream (bounded replay, reconnect may lose events)
+      responses:
+        '200': {description: JSON Event per SSE data line, content: {text/event-stream: {schema: {type: string}}}}
+components:
+  responses:
+    Error:
+      description: Validation, quorum, state, persistence or consistency error
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [error]
+            additionalProperties: false
+            properties: {error: {type: string}}

@@ -1,0 +1,115 @@
+{
+  "entry": {
+    "version": 1,
+    "sequence": 1,
+    "timestamp": 1800000000,
+    "previous": "",
+    "proposal": {
+      "version": 1,
+      "epoch": 1,
+      "configHash": "3f80795ca77333e848694850f76e9cf36c9d38cca3805c02d4a77a341459f3dc",
+      "event": "issue",
+      "subject": "example.com",
+      "key": "sKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX4",
+      "generation": 1,
+      "previous": "",
+      "activate": 1800000000,
+      "retire": 1800000000,
+      "expires": 1800086400,
+      "nonce": "demo-00000000000000000001"
+    },
+    "approvals": [
+      {
+        "operator": "ca-1",
+        "certificate": "MIIBUTCCAQOgAwIBAgIQAMrN-W1fXEug28GsJETGcjAFBgMrZXAwDzENMAsGA1UEAxMEY2EtMTAeFw0yNzAxMTUwNzU5MDBaFw0yNzAxMTYwODAwMDBaMBYxFDASBgNVBAMTC2V4YW1wbGUuY29tMCowBQYDK2VwAyEAsKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX6jbjBsMA4GA1UdDwEB_wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFKRMp9txZUThDb7oP0oiBhWNsJqiMBYGA1UdEQQPMA2CC2V4YW1wbGUuY29tMAUGAytlcANBAJMcbafLl6xeaye2YAWoaJVcJj206Ypl6_AsOj2XywqqWn97O3VxN4UeFS9bzuLMh5JX2YONZU8tYWUmPWgPtg0",
+        "vote": {
+          "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTEiLCJ0eXAiOiJxcGstYXBwcm92YWwtdjEifQ",
+          "signature": "TGX4yxamyvlcfrkqyoat_fDL8sNZmotK9f6ldGi54PFCcNKvHWyDizjt6h5RTRTMny47bE2SrT9n7IF2yNkcBw"
+        }
+      },
+      {
+        "operator": "ca-2",
+        "certificate": "MIIBUTCCAQOgAwIBAgIQAMrN-W1fXEug28GsJETGcjAFBgMrZXAwDzENMAsGA1UEAxMEY2EtMjAeFw0yNzAxMTUwNzU5MDBaFw0yNzAxMTYwODAwMDBaMBYxFDASBgNVBAMTC2V4YW1wbGUuY29tMCowBQYDK2VwAyEAsKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX6jbjBsMA4GA1UdDwEB_wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFGaNRzL1D5givfGBpfM6Ud8MazQCMBYGA1UdEQQPMA2CC2V4YW1wbGUuY29tMAUGAytlcANBAPiWSkxN4uiC0LY76kO18_cY8pyUUunqHUkInrMoXWN007fdesN9BShkbod406WTEadfxK6kHL7jnVQMhGiN2gY",
+        "vote": {
+          "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTIiLCJ0eXAiOiJxcGstYXBwcm92YWwtdjEifQ",
+          "signature": "Huldj__Iop1VC-9WMOImGyPDj_FR0BMq2syuhyUgfVcU7scRCCLsmzNEPa_Mg8FLbKRJ4rLu3ihHVI5Vtwa4Bg"
+        }
+      },
+      {
+        "operator": "ca-3",
+        "certificate": "MIIBUTCCAQOgAwIBAgIQAMrN-W1fXEug28GsJETGcjAFBgMrZXAwDzENMAsGA1UEAxMEY2EtMzAeFw0yNzAxMTUwNzU5MDBaFw0yNzAxMTYwODAwMDBaMBYxFDASBgNVBAMTC2V4YW1wbGUuY29tMCowBQYDK2VwAyEAsKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX6jbjBsMA4GA1UdDwEB_wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFD4-IaLpDHWref8xZIChyGbaGB3fMBYGA1UdEQQPMA2CC2V4YW1wbGUuY29tMAUGAytlcANBAItfFbHiP1t-arsGnVzl5JMI61nkZNqr-XSQsyHuAeDN3tLu17jq2ZDXSdIcUo8OB1B_EUflpbsRSkVUTLz7Qgc",
+        "vote": {
+          "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTMiLCJ0eXAiOiJxcGstYXBwcm92YWwtdjEifQ",
+          "signature": "-xcbeCG3qTJDxiqcM8R701_6xoJMSajuEKJ7d0gmRHq6W7uI58n-K29V7hv7izXc9jQ5ZccrpVFBuY5VXW4WBQ"
+        }
+      },
+      {
+        "operator": "ca-4",
+        "certificate": "MIIBUTCCAQOgAwIBAgIQAMrN-W1fXEug28GsJETGcjAFBgMrZXAwDzENMAsGA1UEAxMEY2EtNDAeFw0yNzAxMTUwNzU5MDBaFw0yNzAxMTYwODAwMDBaMBYxFDASBgNVBAMTC2V4YW1wbGUuY29tMCowBQYDK2VwAyEAsKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX6jbjBsMA4GA1UdDwEB_wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFFARvNHuHD5PKaZC-JlC3HH1L6twMBYGA1UdEQQPMA2CC2V4YW1wbGUuY29tMAUGAytlcANBABPcAsFGP0cJRl3x-yCaFqGwDcqD_WNPDbmgUjga-STqzSqxAoXNkir3nIYLDxlXiy0IScSaEF5VabGY1Vp9qAM",
+        "vote": {
+          "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTQiLCJ0eXAiOiJxcGstYXBwcm92YWwtdjEifQ",
+          "signature": "DFUggQ_I_77xLxCPg2DPCRM97GaXhnZGwbByLV6wH77xU3rPTs71K65-T-7iSvDThHwxeRVaXU4u8Zk0JYTDDA"
+        }
+      },
+      {
+        "operator": "ca-5",
+        "certificate": "MIIBUTCCAQOgAwIBAgIQAMrN-W1fXEug28GsJETGcjAFBgMrZXAwDzENMAsGA1UEAxMEY2EtNTAeFw0yNzAxMTUwNzU5MDBaFw0yNzAxMTYwODAwMDBaMBYxFDASBgNVBAMTC2V4YW1wbGUuY29tMCowBQYDK2VwAyEAsKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX6jbjBsMA4GA1UdDwEB_wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFCDcAQ1WLIxIbmrmzfQ0UQIcFT8oMBYGA1UdEQQPMA2CC2V4YW1wbGUuY29tMAUGAytlcANBABOazwyXZw3087alCyL4AgNOCnp7fsJJ9nSOhXrY9czZWqS43iX7eOi39K8VKiw_U45djodr-gdvV8Tsx-O6Igs",
+        "vote": {
+          "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTUiLCJ0eXAiOiJxcGstYXBwcm92YWwtdjEifQ",
+          "signature": "05O-3L8k2ZwN62STQkT6vR4l4SK17xLv7F1nODH9g-A39maBNYmc0yW3ikh6ikKvO_CRwXZQ1h5UrYSpArGaCA"
+        }
+      }
+    ]
+  },
+  "checkpoint": {
+    "head": {
+      "version": 1,
+      "epoch": 1,
+      "configHash": "3f80795ca77333e848694850f76e9cf36c9d38cca3805c02d4a77a341459f3dc",
+      "logId": "qpk-demo",
+      "size": 1,
+      "root": "d503a4195bb822bbf39c086772e1b34406ccf23e2bd53d43c4aaf28451495c28",
+      "stateRoot": "74a962997c9ab31923800d6692f981d29d4c0bc23e1b5eaea7f373fec97b47ec",
+      "timestamp": 1800000000,
+      "previous": "4bc4ebe63f37eecfff98441e9fe8c52d2d2934194e7d98007de27c8af8b39212"
+    },
+    "votes": [
+      {
+        "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTIiLCJ0eXAiOiJxcGstY2hlY2twb2ludC12MSJ9",
+        "signature": "z1ni1OuI53btvB2ZhsnF0a8DELZIMHs6NJ5x0ENycELJc7ervkW88NCv6GbT8wATWV4GFvT3e-SQ9M-ngXwgAw"
+      },
+      {
+        "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTMiLCJ0eXAiOiJxcGstY2hlY2twb2ludC12MSJ9",
+        "signature": "sgbp2SfBpLIjXj0l4xVNuO9GBi2ejmgs8d2qxN6J0-WbVNRY3k4pDsMrJN2aQvN0TI-7n7sGN_U8CMkP66DMBg"
+      },
+      {
+        "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTEiLCJ0eXAiOiJxcGstY2hlY2twb2ludC12MSJ9",
+        "signature": "ISv8ZH7HkCswDgL7e6sA9MVqWg0iO-iNboAh5I4-ExoyHk-SvvJOoJJjbkrUwjPiJzXCOfp2aH2WwrJqyTd9BA"
+      },
+      {
+        "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTUiLCJ0eXAiOiJxcGstY2hlY2twb2ludC12MSJ9",
+        "signature": "JezyTJQ89Cmnc58pFLC0yP8cEdjiU2Gf5hNCYnI8x9MGncena33D41SKL47ilyyupjo26i0KtS2ePJwcXODuAg"
+      },
+      {
+        "protected": "eyJhbGciOiJFZERTQSIsImtpZCI6ImNhLTQiLCJ0eXAiOiJxcGstY2hlY2twb2ludC12MSJ9",
+        "signature": "GAWOZ1Uof_kXc9wR_etWuydRor289ZOA3_sbqn1XxyP5xGH6RbpNc52CfLeAvhBhDdFJaJxCToCnGW603R4gBw"
+      }
+    ]
+  },
+  "inclusion": [],
+  "state": {
+    "subject": "example.com",
+    "generation": 1,
+    "entryHash": "1b2aba0c25f1a62a4a5f069491b0ab8c15ced10f9f4cf7ba702d266b83e39374",
+    "key": "sKqCWGcomhPXzHHKtLBD9K-V8NOEI1mQNtWeK8ibfX4",
+    "oldKey": "",
+    "activate": 1800000000,
+    "retire": 1800000000,
+    "expires": 1800086400,
+    "revoked": false
+  },
+  "stateIndex": 0,
+  "stateCount": 1,
+  "stateProof": [],
+  "consistency": []
+}

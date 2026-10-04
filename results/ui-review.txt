@@ -1,0 +1,1 @@
+PASS UI review: isolated scenarios, SSE deduplication, reset state, error recovery, no silent WASM fallback, English and monochrome styling

@@ -1,0 +1,152 @@
+[
+  {
+    "kind": "approved",
+    "operator": "",
+    "subject": "example.com",
+    "message": "",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "committed",
+    "operator": "",
+    "subject": "example.com",
+    "message": "entry #1",
+    "count": 0,
+    "required": 4,
+    "head": {
+      "version": 1,
+      "epoch": 1,
+      "configHash": "3f80795ca77333e848694850f76e9cf36c9d38cca3805c02d4a77a341459f3dc",
+      "logId": "qpk-demo",
+      "size": 1,
+      "root": "d503a4195bb822bbf39c086772e1b34406ccf23e2bd53d43c4aaf28451495c28",
+      "stateRoot": "74a962997c9ab31923800d6692f981d29d4c0bc23e1b5eaea7f373fec97b47ec",
+      "timestamp": 1800000000,
+      "previous": "4bc4ebe63f37eecfff98441e9fe8c52d2d2934194e7d98007de27c8af8b39212"
+    },
+    "time": 1800000000
+  },
+  {
+    "kind": "finality-vote",
+    "operator": "ca-1",
+    "subject": "example.com",
+    "message": "checkpoint signed",
+    "count": 0,
+    "required": 4,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "finality-vote",
+    "operator": "ca-2",
+    "subject": "example.com",
+    "message": "checkpoint signed",
+    "count": 0,
+    "required": 4,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "finality-vote",
+    "operator": "ca-3",
+    "subject": "example.com",
+    "message": "checkpoint signed",
+    "count": 0,
+    "required": 4,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "finality-vote",
+    "operator": "ca-4",
+    "subject": "example.com",
+    "message": "checkpoint signed",
+    "count": 0,
+    "required": 4,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "finality-vote",
+    "operator": "ca-5",
+    "subject": "example.com",
+    "message": "checkpoint signed",
+    "count": 0,
+    "required": 4,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "proposed",
+    "operator": "",
+    "subject": "example.com",
+    "message": "issue",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "signed",
+    "operator": "ca-1",
+    "subject": "example.com",
+    "message": "verified approval",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "signed",
+    "operator": "ca-2",
+    "subject": "example.com",
+    "message": "verified approval",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "signed",
+    "operator": "ca-3",
+    "subject": "example.com",
+    "message": "verified approval",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "signed",
+    "operator": "ca-4",
+    "subject": "example.com",
+    "message": "verified approval",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "signed",
+    "operator": "ca-5",
+    "subject": "example.com",
+    "message": "verified approval",
+    "count": 0,
+    "required": 3,
+    "head": null,
+    "time": 1800000000
+  },
+  {
+    "kind": "verified",
+    "operator": "",
+    "subject": "example.com",
+    "message": "light client verified quorum, X.509, log and current-state proofs",
+    "count": 0,
+    "required": 0,
+    "head": null,
+    "time": 1800000000
+  }
+]

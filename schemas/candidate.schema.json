@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/candidate.schema.json",
+  "type": "object",
+  "properties": {
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "entry.schema.json"
+      },
+      "minItems": 1
+    },
+    "parent": {
+      "$ref": "checkpoint.schema.json"
+    },
+    "head": {
+      "$ref": "head.schema.json"
+    }
+  },
+  "required": [
+    "entries",
+    "parent",
+    "head"
+  ],
+  "additionalProperties": false
+}

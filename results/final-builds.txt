@@ -1,0 +1,8 @@
+GOOS=js GOARCH=wasm /tmp/go/bin/go build -o web/simulator.wasm ./cmd/wasm
+cp "$( /tmp/go/bin/go env GOROOT )/lib/wasm/wasm_exec.js" web/wasm_exec.js
+node scripts/wasm-smoke.cjs
+PASS WASM: 13 cryptographic scenarios, 138 worker events
+mkdir -p bin
+GOOS=windows GOARCH=amd64 /tmp/go/bin/go build -o bin/demo-windows.exe ./cmd/demo
+GOOS=darwin GOARCH=arm64 /tmp/go/bin/go build -o bin/demo-macos ./cmd/demo
+GOOS=linux GOARCH=arm64 /tmp/go/bin/go build -o bin/demo-linux-arm64 ./cmd/demo

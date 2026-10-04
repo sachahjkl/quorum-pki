@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/event.schema.json",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string"
+    },
+    "operator": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "required": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "head": {
+      "anyOf": [
+        {
+          "$ref": "head.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "time": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    }
+  },
+  "required": [
+    "kind",
+    "operator",
+    "subject",
+    "message",
+    "count",
+    "required",
+    "head",
+    "time"
+  ],
+  "additionalProperties": false
+}

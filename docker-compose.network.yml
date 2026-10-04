@@ -1,0 +1,47 @@
+x-node: &node
+  build: .
+  entrypoint: ["/app/bin/node"]
+  user: "0:0"
+  volumes: ["state:/data"]
+services:
+  bootstrap:
+    <<: *node
+    command: ["-role", "init", "-data", "/data", "-urls", "http://ca1:8080,http://ca2:8080,http://ca3:8080,http://ca4:8080,http://ca5:8080"]
+  registry:
+    <<: *node
+    command: ["-role", "registry", "-data", "/data"]
+    ports: ["8081:8080"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  ca1:
+    <<: *node
+    command: ["-role", "validator", "-id", "ca-1", "-data", "/data"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  ca2:
+    <<: *node
+    command: ["-role", "validator", "-id", "ca-2", "-data", "/data"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  ca3:
+    <<: *node
+    command: ["-role", "validator", "-id", "ca-3", "-data", "/data"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  ca4:
+    <<: *node
+    command: ["-role", "validator", "-id", "ca-4", "-data", "/data"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  ca5:
+    <<: *node
+    command: ["-role", "validator", "-id", "ca-5", "-data", "/data"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  witness:
+    <<: *node
+    command: ["-role", "witness", "-id", "witness-1", "-data", "/data"]
+    ports: ["8082:8080"]
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+  coordinator:
+    <<: *node
+    command: ["-role", "coordinator", "-data", "/data", "-registry", "http://registry:8080"]
+    ports: ["8083:8080"]
+    depends_on: [registry, ca1, ca2, ca3, ca4, ca5]
+    restart: on-failure
+volumes:
+  state:

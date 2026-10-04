@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/config.schema.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "logId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approvalQuorum": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "finalityQuorum": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "maxByzantine": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "$ref": "member.schema.json"
+      },
+      "minItems": 1,
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "version",
+    "epoch",
+    "logId",
+    "approvalQuorum",
+    "finalityQuorum",
+    "maxByzantine",
+    "members"
+  ],
+  "additionalProperties": false
+}

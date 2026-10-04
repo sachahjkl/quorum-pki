@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quorum PKI / Laboratory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div><h1>Quorum PKI</h1><p>Distributed validation laboratory / Experimental protocol v1</p></div>
+    <span id="connection">Connecting…</span>
+  </header>
+  <main>
+    <section class="explanation" aria-labelledby="explanation-title">
+      <h2 id="explanation-title">What this demonstrates</h2>
+      <p>A certificate authority normally has the power to certify a domain’s public key on its own. This experiment adds a client-enforced rule: several independent operators must approve the same binding before it can be accepted.</p>
+      <ol class="flow">
+        <li><b>Propose</b><span>Request a domain → public key binding.</span></li>
+        <li><b>Approve</b><span>Authorities check the request and sign independently.</span></li>
+        <li><b>Finalize</b><span>A separate quorum signs the log and current-state roots.</span></li>
+        <li><b>Verify</b><span>The client checks signatures, proofs, freshness and its saved checkpoint.</span></li>
+      </ol>
+      <details>
+        <summary>Quorums, rotation and the trust assumptions</summary>
+        <div class="explanation-detail">
+          <p><b>Approval is not finality.</b> With the default five operators, three approvals authorize a binding. Four checkpoint signatures finalize its position and resulting state. These thresholds serve different purposes: two compromised operators cannot authorize a false binding, while overlapping finality quorums prevent conflicting decisions under the configured fault assumptions and durable honest voting locks.</p>
+          <p><b>Rotation preserves an overlap.</b> A new key is published before activation. Advance the virtual clock to observe the scheduled state, the period where both keys are accepted, and retirement of the old key. Revocation disables the binding; recovery uses a separate preconfigured credential. A heartbeat refreshes the checkpoint without extending key validity.</p>
+          <p><b>The log records history; the state tree identifies the current binding.</b> Merkle proofs let a client check both without downloading the whole registry. A saved checkpoint helps reject rollback. Witnesses can expose contradictory signed views when those views are compared.</p>
+          <p><b>This is a local sandbox.</b> Domain ownership is represented by a signed fixture, not a live ACME challenge. The operators use real Ed25519 signatures and X.509 certificates, but share one demonstration environment. The finality protocol can stall after incompatible partial votes; leader changes and dynamic membership are not implemented. Its security depends on the pinned federation, independent operators, honest domain checks and durable checkpoints.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="controls" aria-label="Simulation configuration">
+      <label>Runtime<select id="runtime"><option value="native">Native Go / SSE</option><option value="wasm">Go WebAssembly / Local worker</option></select></label>
+      <label>Authorities<input id="members" type="number" min="1" max="100" value="5"></label>
+      <label>Approval threshold<input id="quorum" type="number" value="3" min="1"></label>
+      <label>Finality threshold<input id="finality" type="number" value="4" min="1"></label>
+      <label>Byzantine fault budget<input id="byzantine" type="number" value="1" min="0"></label>
+      <label>Seed<input id="seed" type="number" value="42"></label>
+      <label>Malicious operators<input id="malicious" placeholder="ca-1,ca-2"></label>
+      <label>Partitioned / Offline<input id="down" placeholder="ca-5"></label>
+      <button id="reset">Apply / Reset</button>
+    </section>
+    <p class="notice">Start by issuing example.com. For a forgery test, set malicious operators, apply/reset, then propose a false key: one or two cannot reach approval quorum; three can. Reset creates a fresh simulation, not a recovery of the previous federation.</p>
+    <section class="actions" aria-label="Protocol actions">
+      <button data-event="issue">Issue example.com</button>
+      <button data-event="rotate">Schedule rotation</button>
+      <button data-event="revoke">Revoke</button>
+      <button data-event="recover">Recover</button>
+      <button data-event="heartbeat">Refresh checkpoint</button>
+      <button id="forge" class="danger">Propose false key</button>
+      <button id="tick">Clock +10 s</button>
+      <button id="scenarios">Run attack scenarios</button>
+      <button id="export">Export trace</button>
+    </section>
+    <section class="summary" aria-label="Current request">
+      <div><small>REQUEST</small><strong id="request">—</strong></div>
+      <div><small>APPROVAL</small><strong id="approval">0 / 3</strong></div>
+      <div><small>FINALITY</small><strong id="final">0 / 4</strong></div>
+      <div><small>STATUS</small><strong id="status">Ready</strong></div>
+    </section>
+    <section class="grid">
+      <article><h2>Authorities</h2><div id="authorities"></div></article>
+      <article>
+        <h2>Authenticated log</h2>
+        <p class="root-label">MERKLE ROOT <code id="root">—</code></p>
+        <div id="timeline" aria-label="Committed log entries"></div>
+        <table><thead><tr><th>#</th><th>Subject</th><th>Event</th><th>Root</th></tr></thead><tbody id="ledger"></tbody></table>
+        <details><summary>Latest client proof</summary><pre id="proof">—</pre></details>
+      </article>
+    </section>
+    <section class="grid">
+      <article><h2>Live events</h2><div id="events" class="stream"></div></article>
+      <article><h2>Scenario results</h2><div id="results"><p>Each scenario runs real signatures and verification in an isolated simulation. A passing attack scenario means the outcome matches its assumptions; threshold compromise is expected to succeed.</p></div></article>
+    </section>
+    <footer>Approval ≠ finality. Without enough reachable authorities, writes stop. Current-key acceptance requires a fresh checkpoint and an authenticated state proof.</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

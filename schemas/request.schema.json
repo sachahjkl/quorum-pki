@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/request.schema.json",
+  "type": "object",
+  "properties": {
+    "proposal": {
+      "$ref": "proposal.schema.json"
+    },
+    "owner": {
+      "$ref": "signature.schema.json"
+    },
+    "recovery": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "proposal",
+    "owner",
+    "recovery"
+  ],
+  "additionalProperties": false
+}

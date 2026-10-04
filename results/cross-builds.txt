@@ -1,0 +1,4 @@
+mkdir -p bin
+GOOS=windows GOARCH=amd64 /tmp/go/bin/go build -o bin/demo-windows.exe ./cmd/demo
+GOOS=darwin GOARCH=arm64 /tmp/go/bin/go build -o bin/demo-macos ./cmd/demo
+GOOS=linux GOARCH=arm64 /tmp/go/bin/go build -o bin/demo-linux-arm64 ./cmd/demo

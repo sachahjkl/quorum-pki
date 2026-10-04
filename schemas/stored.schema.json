@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quorum-pki.invalid/schemas/stored.schema.json",
+  "type": "object",
+  "properties": {
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "entry.schema.json"
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "$ref": "checkpoint.schema.json"
+      }
+    }
+  },
+  "required": [
+    "entries",
+    "checkpoints"
+  ],
+  "additionalProperties": false
+}
