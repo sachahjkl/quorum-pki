@@ -1,12 +1,64 @@
-# Quorum PKI laboratory
+# Quorum PKI
 
-Executable research PoC of a quorum-based X.509 acceptance overlay. Go standard library only, no cgo or Go modules downloaded. The same cryptographic/state engine runs as independent native HTTP services and as a Go WebAssembly browser Worker.
+**An experimental quorum-based acceptance overlay for X.509 certificates.**
 
-**Delivery status: runnable v0.1, not the complete target federation.** Quorum authorization, notarized current-state/log proofs, rotation, revocation, recovery, adversarial scenarios, native processes, WASM, strict schemas, OpenAPI and a checked bounded TLA+ model are implemented. Hot governance transitions and a full leader-changing BFT consensus are not. The gaps below are substantive; the specification distinguishes implemented behavior from proposed extensions.
+[![CI and GitHub Pages](https://github.com/sachahjkl/quorum-pki/actions/workflows/pages.yml/badge.svg)](https://github.com/sachahjkl/quorum-pki/actions/workflows/pages.yml)
 
-## Run the interactive lab
+[Interactive laboratory](https://sachahjkl.github.io/quorum-pki/) · [Protocol specification](spec/protocol.md) · [Threat model](spec/threat-model.md) · [OpenAPI](api/openapi.yaml) · [Formal model](formal/README.md)
 
-Requires Go 1.25+ (or Docker Compose).
+## Abstract
+
+Quorum PKI explores a client-enforced policy in which a domain–public-key binding requires approval from several independently governed certificate authorities. An approval quorum authorizes a binding; a separate finality quorum notarizes an ordered log and its derived current state. A client verifies operator signatures, X.509 chains, Merkle proofs, checkpoint freshness and consistency with its previously accepted checkpoint before accepting a key.
+
+The repository provides an executable Go reference implementation, a browser WebAssembly laboratory, strict wire schemas and bounded TLA+ models. The goal is to make the protocol's assumptions and failure modes reviewable through both specification and reproducible experiments.
+
+## Status and scope
+
+| Item | Status |
+|---|---|
+| Protocol | Experimental version 1 |
+| Implementation | Research proof of concept, revision 0.1 |
+| Standards status | Not an IETF RFC or Internet-Draft |
+| Dependencies | Go standard library; no cgo or third-party Go modules |
+| License | [MIT](LICENSE) |
+
+Implemented features include quorum authorization, signed checkpoints, log and current-state proofs, key rotation, revocation, subject recovery, native HTTP services and a Go WASM worker. The implementation uses a fixed sequencer and durable notarization locks. It does not provide complete view-changing BFT consensus or hot membership transitions.
+
+Existing browsers do not enforce this overlay. The CLI verifies authorization artifacts; TLS integration and proof of possession remain the caller's responsibility. This is a research implementation, not a production PKI deployment.
+
+## Protocol overview
+
+1. **Propose.** An owner submits a signed state transition for a domain and public key. Recovery uses a separately pinned credential.
+2. **Approve.** Operators validate the request independently and sign the same proposal. Key-bearing approvals include X.509 certificates for the same subject and SPKI.
+3. **Finalize.** Validators verify the ordered history and derived state, persist voting locks, and sign a checkpoint committing to both Merkle roots.
+4. **Verify.** A client checks the finality certificate, approvals, certificate chains, log inclusion, current-state inclusion, freshness and consistency with its saved checkpoint.
+
+The log proves that an event occurred. The state commitment identifies the currently authorized key schedule. Historical inclusion alone does not establish that a key remains valid after rotation or revocation.
+
+### Two quorums, two guarantees
+
+Let `m` be the number of operators, `a` the approval threshold, `q` the finality threshold and `f` the assumed Byzantine fault budget. The configuration requires `a > f` and `2q > m + f`.
+
+| Configuration | Approval | Finality | Combined fault budget |
+|---|---:|---:|---:|
+| Default: 5 operators | 3-of-5 | 4-of-5 | At most 1 Byzantine operator |
+| Alternative: 7 operators | 5-of-7 | 5-of-7 | At most 2 Byzantine operators |
+
+Approval protects against unauthorized bindings under honest validation assumptions. Finality relies on honest quorum intersection and persistent locks to prevent conflicting finalized histories. Three approval signatures in the default configuration do not, by themselves, establish finality.
+
+These guarantees assume an independently authenticated, pinned configuration; genuinely independent operators; correct domain validation; uncompromised cryptographic keys; durable locks and client checkpoints; and a trustworthy local clock. Organizational independence is a governance assumption, not a cryptographic result.
+
+### Lifecycle and availability
+
+Rotation permits a bounded overlap during which the old and new keys are accepted. Revocation disables the binding. Recovery replaces it through a separate credential and the ordinary quorums. Explicit heartbeats refresh checkpoint freshness without extending certificate or key validity.
+
+The CLI's default maximum checkpoint age is five minutes. If refresh cannot finalize, acceptance eventually fails closed. Conflicting or lost partial finality votes can stall the protocol indefinitely; no leader-change mechanism or availability theorem is supplied.
+
+## Try the laboratory
+
+Open the [hosted laboratory](https://sachahjkl.github.io/quorum-pki/). It runs the Go engine locally in a WebAssembly worker and requires no native API server.
+
+For a local instance, install **Go 1.25+** and `make`:
 
 ```sh
 make wasm
@@ -14,33 +66,41 @@ make demo
 # Open http://localhost:8080
 ```
 
-Or:
+Alternatively, use Docker Compose:
 
 ```sh
 docker compose up --build
 ```
 
-Compose's default launches the interactive simulator. Open `http://localhost:8080`, issue `example.com`, rotate, advance the virtual clock, revoke or trigger forged requests. The native mode uses goroutines/SSE; the browser mode uses Go WASM in a Worker. Select the mode in the first control. Both modes simulate independent actors in one machine; they do not establish independent organizational trust.
+The local interface supports native Go/SSE and WASM worker modes. Both simulate multiple actors on one machine; they do not establish independent organizational trust.
 
-To see forged authorization blocked, reset with `ca-1` or `ca-1,ca-2` in the malicious field, then propose a fake key. Reset with `ca-1,ca-2,ca-3` to demonstrate authorization-threshold compromise. The UI distinguishes 3 approvals from 4 finality signatures. Run “Run attack scenarios” to exercise all thirteen isolated cases. It includes fork evidence after sufficient finality keys are stolen, rather than pretending a signed fork is possible within the honest-intersection assumptions.
+Suggested walkthrough:
 
-The included WASM binary was executed in Node's Worker runtime against all scenarios. The interface is in English, with a protocol walkthrough and an unrounded, monochrome layout. Browser visual verification was blocked by the control browser refusing localhost (`ERR_BLOCKED_BY_CLIENT`); no visual QA success is claimed.
+1. Issue `example.com` and inspect approvals, finality signatures and the client proof.
+2. Schedule rotation and advance the virtual clock through activation, overlap and retirement.
+3. Revoke the binding, then recover it.
+4. Reset with `ca-1` or `ca-1,ca-2` marked malicious and propose a false key: authorization is blocked.
+5. Reset with `ca-1,ca-2,ca-3` marked malicious: the approval threshold is compromised.
+6. Run the thirteen isolated attack scenarios. A passing scenario means the observed outcome matches its stated assumptions, including expected success after threshold compromise.
 
-## Run genuinely separate processes
+Reset creates a fresh simulation. It is not an in-protocol federation recovery procedure.
+
+## Run independent services
+
+On a POSIX shell:
 
 ```sh
 make build
 GO=go scripts/network-demo.sh --check
-# omit --check to leave the processes running
+# Omit --check to leave the processes running.
 ```
 
-This starts five independent CA processes (ports 8101–8105), registry (8081), witness (8082) and coordinator (8083). It creates random local keys, submits a signed request, verifies a compact bundle and has the witness observe the checkpoint. The script reports its temporary state directory. The independent-service coordinator exposes the signed API/SSE; the simulator's unsigned UI convenience buttons are not its signed request client.
+The script starts five CA processes on ports 8101–8105, a registry on 8081, a witness on 8082 and a coordinator on 8083. It creates fresh local keys, submits a signed request, verifies a compact bundle and records a witness observation. It reports its temporary state directory.
 
 For persistent container processes:
 
 ```sh
 docker compose -f docker-compose.network.yml up --build
-# Copy fixture state for the local CLI if desired:
 docker compose -f docker-compose.network.yml cp coordinator:/data ./data
 make build
 bin/request -data data -url http://localhost:8083
@@ -48,9 +108,34 @@ bin/verifier -config data/config.json -url http://localhost:8081
 bin/request -data data -url http://localhost:8083 -event rotate
 ```
 
-Bootstrap preserves and verifies an existing matching configuration, and refuses to overwrite inconsistent keys or URLs. It is not a key-reset tool. The local script always creates a fresh isolated universe. No Docker executable was available in the execution environment, so Compose/image construction is supplied but not executed; native HTTP launch was actually tested. The containers share a development state volume, which is not production key isolation.
+Bootstrap preserves and verifies an existing matching configuration and refuses inconsistent keys or URLs. The containers share a development state volume; this is not production key isolation. The independent coordinator accepts signed requests, while simulator UI endpoints are demonstration conveniences.
 
-## Verify and reproduce
+## Specification and repository map
+
+| Path | Purpose |
+|---|---|
+| [spec/protocol.md](spec/protocol.md) | Implemented protocol, serialization, acceptance rules and normative requirements |
+| [spec/threat-model.md](spec/threat-model.md) | Adversary capabilities, trust assumptions and claimed properties |
+| [spec/security-considerations.md](spec/security-considerations.md) | Deployment risks, bootstrapping and comparisons |
+| [spec/governance.md](spec/governance.md) | Proposed membership and epoch transitions; not implemented |
+| [spec/references.md](spec/references.md) | Standards provenance, exact reuse and deliberate exclusions |
+| [schemas/](schemas/) | JSON Schema Draft 2020-12 wire contracts |
+| [api/openapi.yaml](api/openapi.yaml) | Native HTTP API |
+| [internal/protocol/](internal/protocol/) | Types, restricted JCS profile, detached signatures and policy checks |
+| [internal/merkle/](internal/merkle/) | RFC 9162-style log hashing, inclusion and consistency proofs |
+| [internal/engine/](internal/engine/) | X.509 validation, state replay, finality locks, clients and witnesses |
+| [internal/service/](internal/service/) | Independent HTTP services and signed compare-and-append |
+| [internal/simulation/](internal/simulation/) | Fault injection, virtual clock and adversarial scenarios |
+| [cmd/](cmd/) | Demo, WASM adapter, service launcher, proposer and verifier |
+| [web/](web/) | Browser laboratory and worker assets |
+| [formal/](formal/) | Bounded TLA+ models and reproduction instructions |
+| [results/](results/) | Captured verification outputs, fixtures and benchmarks |
+
+The protocol uses SHA-256, Ed25519, a restricted RFC 8785 canonical JSON profile and detached JWS-style signatures. Merkle algorithms reuse RFC 9162 §2.1. These choices do not imply full JOSE, Certificate Transparency, ACME or browser-policy compatibility; [references](spec/references.md) describe the exact scope.
+
+## Verification and evidence
+
+Go and Node.js are required for the core checks:
 
 ```sh
 make test
@@ -58,56 +143,53 @@ make vet
 make scenarios
 make wasm-test
 node scripts/ui-review.cjs
+```
+
+Additional reproduction commands:
+
+```sh
 make cross
 make bench
 make formal TLC_JAR=/absolute/path/tla2tools.jar
 python3 scripts/validate-schemas.py
 ```
 
-Go application builds use `CGO_ENABLED=0`. `make cross` targets Windows amd64, macOS arm64 and Linux arm64; builds are cross-checked, not runtime-certified on those OSes. The race detector itself requires cgo/toolchain support and is a separate development check.
+Formal checking requires Java 17+ and the TLA+ tools jar; see [formal/README.md](formal/README.md) for configurations and the expected unsafe counterexample. Schema-validation requirements are documented in the [validation script](scripts/validate-schemas.py). Go application builds use `CGO_ENABLED=0`; race detection requires separate cgo/toolchain support.
 
-`cmd/request` is a signed CLI proposer using the owner/recovery fixture keys; `cmd/verifier` pins local Config and retains a durable checkpoint. An advertised `/v1/config` is not itself a trusted bootstrap channel. The verifier demonstrates authorization checking, not a browser TLS handshake. Checkpoint maximum age defaults to five minutes; use `bin/request -event heartbeat` or the UI refresh action to obtain a quorum-authenticated new checkpoint without extending key validity. Automatic heartbeat scheduling is not supplied.
+Captured evidence includes:
 
-## Architecture
+- Thirteen native and thirteen actual Go WASM adversarial scenarios.
+- Native independent-service execution with a finalized, client-verified binding and witness observation.
+- Merkle proof checks across every index and prior size for trees of size 1–128, including tampered and extra-node rejection.
+- A bounded behavioral TLA+ run with 673,206 distinct states and all seven modeled invariants satisfied. Unsafe 2-of-3 finality produces the expected `UniqueFinality` counterexample.
+- Exhaustive quorum-intersection checks for 4-of-5 with one Byzantine and 5-of-7 with two.
+- Cross-build outputs and environment-specific benchmarks in [results/](results/).
 
-- `internal/protocol`: typed formats, restricted JCS, detached JWS-style Ed25519 signatures, pinned member/policy checks.
-- `internal/merkle`: RFC 9162 domain-separated tree hashes, O(log N) inclusion and consistency paths.
-- `internal/engine`: X.509 verification, subject state replay, bounded two-key rotation, current-state root, durable finality locks, light client and witnesses.
-- `internal/service`: HTTP transport, separate validator/registry/witness handlers, signed compare-and-append, SSE.
-- `internal/simulation`: deterministic keys/fault selection, optional wall-clock delay, goroutine transport, virtual lifecycle clock and scenarios.
-- `cmd/demo`, `cmd/wasm`: shared engine with native/SSE or Worker adapters.
-- `cmd/node`: independent roles selected by `-role`; no artificial duplicate executables for the same launcher.
-- `cmd/request`, `cmd/verifier`: signed native request and lightweight client.
-- `schemas`, `api`, `spec`, `formal`, `results`: wire contracts, API, normative experimental specification, formal models and captured verification.
+The behavioral model abstracts checkpoint slots by subject generation; it does not prove the concrete implementation or unbounded histories. It supplies no liveness theorem. Cross-builds are not runtime certification, benchmarks are not capacity guarantees, and Node DOM checks do not replace browser visual testing. Docker construction was not exercised in the original captured verification environment.
 
-## Security contract
+Native persistence tests currently encounter directory-sync access errors on Windows. The CI verification environment is Ubuntu; application cross-build support is distinct from native test coverage.
 
-The default is approval **3-of-5** and finality **4-of-5**, with at most one Byzantine operator for the combined contract. A false binding requires compromising the approval threshold or the honest validation oracle. Unique finality requires `2q > m+f` and persistent honest locks. With seven validators, approval/finality 5-of-7 and `f=2` is supported. Merely collecting 3-of-5 signatures cannot by itself prevent signed conflicting histories.
+## Open issues for protocol review
 
-The client verifies genuine independent-operator Ed25519 approvals and X.509 chains, a finality quorum, log inclusion, current-state inclusion, consistency, freshness and its own rollback watermark. The state proof is essential: historical inclusion alone does not establish that a key remains authorized.
+The following questions define the next research work:
 
-The implementation is a fixed-sequencer notarization protocol. It preserves conditional safety but may permanently stall after incompatible partial locks. It has no PBFT-style rounds/view changes or availability theorem. A false-binding scenario with three malicious approval operators violates the approval assumption even if honest notarizers can still enforce log consistency.
+1. **Finality recovery:** how should a federation safely resolve incompatible partial locks and replace a failed sequencer without weakening finalized-history safety?
+2. **Membership governance:** how should independent operators be admitted, removed and replaced across authenticated epochs? A proposed design exists, but hot transitions are not executable.
+3. **Domain validation:** how should independent Internet-vantage checks or ACME adapters replace the signed owner-key fixture?
+4. **Client integration:** how should TLS possession checks, proof delivery, configuration distribution and durable client checkpoints fit browser and service deployments?
+5. **Witness operation:** what gossip, observation and cosigning policy would provide useful detection guarantees under partitions?
+6. **Freshness and scale:** how should automatic heartbeats, incremental replay, storage and authenticated non-membership proofs be designed and evaluated?
 
-## Captured results
+Other current limits include full-history validator replay, JSON snapshot persistence, static membership and no exact deterministic replay of concurrent scheduling. Recovery after federation quorum-key compromise requires an authenticated out-of-band trust reset, not authorization by the compromised quorum.
 
-- Unit/integration/scenario tests pass; native process launch produces a finalized and client-verified binding and witness observation.
-- 13 native adversarial scenarios and 13 actual Go WASM scenarios pass.
-- TLA+ bounded behavioral model: 673,206 distinct states, all seven invariants pass. Unsafe 2-of-3 finality produces the expected UniqueFinality counterexample.
-- Exhaustive quorum-intersection checks pass for 4-of-5 with one Byzantine and 5-of-7 with two.
-- Merkle proofs are tested across every index and old size for tree sizes 1–128, including tamper/extra-node rejection.
-- Benchmarks and environment facts are in `results/benchmarks.txt`; short runs are measurements, not capacity guarantees.
+## GitHub Pages deployment
 
-## Important unfinished scope
+Select **Settings → Pages → Source → GitHub Actions**. The [CI and GitHub Pages workflow](.github/workflows/pages.yml) verifies Go tests, static checks, WASM scenarios and UI behavior, then builds the static site. Pushes to `master` or `main` trigger the workflow; only the repository's default branch deploys. Pull requests run verification and build the artifact. Manual execution is available from the Actions tab.
 
-1. Dynamic epoch/member admission/removal is designed in `spec/governance.md`, not executable.
-2. Complete BFT leader recovery and safe resolution of conflicting partial votes are not implemented.
-3. Domain control is a signed owner-key fixture, not an ACME deployment or independent Internet-vantage validation.
-4. No browser extension/TLS stapling, live domain TLS test, automatic witness gossip/cosigning or sparse non-membership proof.
-5. Heartbeat refresh is explicit, not automatically scheduled; freshness fails closed if refresh cannot finalize. Full-history validator replay and JSON snapshot persistence are deliberately unoptimized.
-6. Reproducible seeds/fault choices/roots are implemented; exact deterministic concurrent scheduling replay is not.
+The deployed copy exposes only the WASM runtime. Relative asset URLs support hosting under `/quorum-pki/`. The deployment URL is recorded in the `github-pages` environment.
 
-See `spec/protocol.md` for the implemented normative behavior, `spec/threat-model.md` for assumptions, `formal/README.md` for exact abstraction limits and `spec/security-considerations.md` for comparisons and bootstrapping/governance risks. This is not trustless and is not production-ready.
+## Contributing to the review
 
-## Interface review / English edition
+Use [issues](https://github.com/sachahjkl/quorum-pki/issues) for protocol questions, counterexamples and reproducible implementation defects. Cite the relevant specification section, state the assumed fault model, and distinguish safety, availability and deployment concerns. For a counterexample, include the configuration, action sequence and observed verification result.
 
-The page now explains the two quorums, key lifecycle, authenticated state and trust assumptions in English. Styling is monochrome with square controls and rule-separated sections. Review fixes isolate scenario streams from the active registry, deduplicate SSE replay, clear counters/proofs on reset and runtime changes, reject unavailable WASM without silently using the native backend, and unlock controls after errors. Node DOM behavior checks and Go/WASM tests pass; this does not replace browser visual QA.
+Pull requests should identify whether they change the implemented protocol, its documentation or a proposed extension, and provide verification appropriate to the affected guarantee.
